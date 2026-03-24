@@ -79,9 +79,8 @@ export default async function AdminDashboardPage() {
               {recentInquiries.map((inq, i) => (
                 <tr
                   key={i}
+                  className="transition-colors hover:bg-surface2"
                   style={{ borderBottom: i < recentInquiries.length - 1 ? '1px solid var(--border)' : 'none' }}
-                  onMouseEnter={e => (e.currentTarget.style.background = 'var(--surface2)')}
-                  onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                 >
                   <td style={{ padding: '14px 20px' }}>
                     <p style={{ fontSize: 13, fontWeight: 300 }}>{inq.name}</p>
@@ -129,10 +128,8 @@ export default async function AdminDashboardPage() {
             key={link.label}
             href={link.href}
             target={link.href.startsWith('/studio') || link.href === '/' ? '_blank' : undefined}
-            className="block p-6 no-underline transition-colors duration-200"
+            className="block p-6 no-underline transition-colors duration-200 hover:bg-surface2"
             style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}
-            onMouseEnter={e => (e.currentTarget.style.background = 'var(--surface2)')}
-            onMouseLeave={e => (e.currentTarget.style.background = 'var(--surface)')}
           >
             <h3 className="font-display text-[18px] font-light mb-1" style={{ color: 'var(--gold)' }}>{link.label}</h3>
             <p className="text-[11px] font-light" style={{ color: 'var(--muted)' }}>{link.desc}</p>

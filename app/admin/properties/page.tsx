@@ -74,9 +74,8 @@ export default async function AdminPropertiesPage() {
             {displayProps.map((p, i) => (
               <tr
                 key={p._id}
+                className="transition-colors hover:bg-surface2"
                 style={{ borderBottom: i < displayProps.length - 1 ? '1px solid var(--border)' : 'none' }}
-                onMouseEnter={e => (e.currentTarget.style.background = 'var(--surface2)')}
-                onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
               >
                 <td style={{ padding: '14px 16px' }}>
                   <p style={{ fontSize: 13, fontWeight: 300 }}>{p.title}</p>
