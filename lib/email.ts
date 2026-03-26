@@ -1,13 +1,23 @@
 import { Resend } from 'resend'
 import type { InquiryFormData, BookingFormData } from '@/types'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
-const FROM   = process.env.RESEND_FROM_EMAIL!
-const TO     = process.env.RESEND_TO_EMAIL!
+// ─── Lazy-initialized email client ───────────────────────────────────────────
+// Instantiated on first use (not at module load) so the build never throws
+// when RESEND_API_KEY is absent from the build environment.
+
+let _resend: Resend | null = null
+
+function getResend() {
+  if (!_resend) _resend = new Resend(process.env.RESEND_API_KEY)
+  return _resend
+}
 
 // ─── Inquiry Email ────────────────────────────────────────────────────────────
 
 export async function sendInquiryEmail(data: InquiryFormData) {
+  const resend = getResend()
+  const FROM   = process.env.RESEND_FROM_EMAIL!
+  const TO     = process.env.RESEND_TO_EMAIL!
   const subject = data.propertyTitle
     ? `New Inquiry: ${data.propertyTitle}`
     : `New ${data.type} Inquiry from ${data.firstName} ${data.lastName}`
@@ -77,6 +87,9 @@ export async function sendInquiryEmail(data: InquiryFormData) {
 // ─── Booking Confirmation Email ───────────────────────────────────────────────
 
 export async function sendBookingConfirmationEmail(data: BookingFormData) {
+  const resend = getResend()
+  const FROM   = process.env.RESEND_FROM_EMAIL!
+  const TO     = process.env.RESEND_TO_EMAIL!
   const viewingLabel = data.viewingType === 'virtual' ? 'Virtual Viewing' : 'In-Person Viewing'
 
   await resend.emails.send({
@@ -131,6 +144,8 @@ export async function sendBookingConfirmationEmail(data: BookingFormData) {
 // ─── Newsletter ───────────────────────────────────────────────────────────────
 
 export async function sendNewsletterWelcomeEmail(email: string) {
+  const resend = getResend()
+  const FROM   = process.env.RESEND_FROM_EMAIL!
   await resend.emails.send({
     from: FROM,
     to:   email,
