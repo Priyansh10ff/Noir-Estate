@@ -7,7 +7,9 @@ export const metadata: Metadata = { title: { default: 'Admin', template: '%s | N
 
 function isAuthenticated() {
   const cookieStore = cookies()
-  return cookieStore.get('admin_session')?.value === process.env.ADMIN_SECRET
+  const adminSecret = process.env.ADMIN_SECRET
+  if (!adminSecret) return false
+  return cookieStore.get('admin_session')?.value === adminSecret
 }
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

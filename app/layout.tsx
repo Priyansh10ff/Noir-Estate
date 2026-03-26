@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: process.env.NEXT_PUBLIC_SITE_URL,
+    url: process.env.NEXT_PUBLIC_SITE_URL || 'https://noirestate.com',
     siteName: 'NOIR Estate',
     title: 'NOIR Estate — Luxury Private Residences',
     description: 'World-class luxury real estate. Private viewings by appointment.',
