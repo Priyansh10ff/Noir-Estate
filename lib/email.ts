@@ -1,9 +1,19 @@
 import { Resend } from 'resend'
 import type { InquiryFormData, BookingFormData } from '@/types'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
-const FROM   = process.env.RESEND_FROM_EMAIL!
-const TO     = process.env.RESEND_TO_EMAIL!
+const resendApiKey = process.env.RESEND_API_KEY
+const FROM = process.env.RESEND_FROM_EMAIL || 'noreply@noirestate.com'
+const TO   = process.env.RESEND_TO_EMAIL   || 'contact@noirestate.com'
+
+const resendClient = resendApiKey ? new Resend(resendApiKey) : null
+
+async function sendEmail(params: Parameters<Resend['emails']['send']>[0]) {
+  if (!resendClient) {
+    console.log('[Email] Resend not configured – skipping:', params.subject)
+    return
+  }
+  await resendClient.emails.send(params)
+}
 
 // ─── Inquiry Email ────────────────────────────────────────────────────────────
 
@@ -13,7 +23,7 @@ export async function sendInquiryEmail(data: InquiryFormData) {
     : `New ${data.type} Inquiry from ${data.firstName} ${data.lastName}`
 
   // Email to the agency
-  await resend.emails.send({
+  await sendEmail({
     from: FROM,
     to:   TO,
     subject,
@@ -48,7 +58,7 @@ export async function sendInquiryEmail(data: InquiryFormData) {
   })
 
   // Auto-reply to the client
-  await resend.emails.send({
+  await sendEmail({
     from: FROM,
     to:   data.email,
     subject: 'Thank you for your inquiry — NOIR Estate',
@@ -79,7 +89,7 @@ export async function sendInquiryEmail(data: InquiryFormData) {
 export async function sendBookingConfirmationEmail(data: BookingFormData) {
   const viewingLabel = data.viewingType === 'virtual' ? 'Virtual Viewing' : 'In-Person Viewing'
 
-  await resend.emails.send({
+  await sendEmail({
     from: FROM,
     to:   TO,
     subject: `Viewing Request: ${data.propertyTitle || 'Private Viewing'} — ${data.preferredDate}`,
@@ -104,7 +114,7 @@ export async function sendBookingConfirmationEmail(data: BookingFormData) {
   })
 
   // Client confirmation
-  await resend.emails.send({
+  await sendEmail({
     from: FROM,
     to:   data.email,
     subject: `Your viewing has been requested — NOIR Estate`,
@@ -131,7 +141,7 @@ export async function sendBookingConfirmationEmail(data: BookingFormData) {
 // ─── Newsletter ───────────────────────────────────────────────────────────────
 
 export async function sendNewsletterWelcomeEmail(email: string) {
-  await resend.emails.send({
+  await sendEmail({
     from: FROM,
     to:   email,
     subject: 'Welcome to the NOIR Estate Private Collection',
